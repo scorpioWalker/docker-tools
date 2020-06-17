@@ -1,0 +1,33 @@
+version: '3.5'
+
+services:
+    app1:
+        container_name: flask_app1
+        image: jcdemo/flaskapp
+        networks:
+            - haproxy
+    app2:
+        container_name: flask_app2
+        image: jcdemo/flaskapp
+        networks:
+            - haproxy
+    ha:
+        container_name: haproxy_server
+        image: haproxy:2.0.15
+        ports:
+            - '5000:5000'
+            - '15001:15001'
+        volumes:
+            - ./haproxy:/usr/local/etc/haproxy:ro
+        depends_on:
+            - app1
+            - app2
+        networks:
+            - haproxy
+
+
+networks:
+    haproxy:
+        driver: bridge
+
+
